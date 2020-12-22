@@ -1,0 +1,92 @@
+TITLE:: Doppler
+summary:: Simple class to calculate Doppler effect.
+categories:: Undocumented classes
+related:: Classes/DistanceFilter, Classes/DistanceMixer, Classes/DelayL, Overviews/Operators#-atan2
+DESCRIPTION::
+This class calculates doppler shifts with pitch-shifting, amplitude scaling and the direction angle of a sound source, either by using distance to calculate radial distance or modulating a delay line by distance.
+
+
+CLASSMETHODS::
+
+METHOD:: new
+Instantiates a new Doppler object with the values used to calculate Doppler shifts.
+
+ARGUMENT:: listenerDist
+Distance in meters of sound source from listener.
+
+ARGUMENT:: time
+total time taken for sound to travel its distance.
+
+ARGUMENT:: dist
+The toal distance travelled by sound source. The total distance is 2 * dist.
+
+ARGUMENT:: type
+Must be a string, either "saw" or "noise" This is the object that modulates the distance and time of the sound source.
+
+returns:: "saw" returns linear motion. "noise" returns random motion.
+
+
+INSTANCEMETHODS::
+
+METHOD:: distance
+radial distance travelled by sound source
+
+returns:: square root of the sum of the squares of listenerDist and src
+
+METHOD:: src
+Type of modulator to control movement of the sound source. Determined by type
+
+returns:: LFSaw.kr(time, 1, dist) or LFNoise2.kr(time, dist)
+
+METHOD:: velocity
+The rate of change per second
+
+returns:: Slope of distance
+
+METHOD:: pitchRatio
+change in pitch according to slope.
+
+returns:: (speed of sound - velocity)/speed of sound
+
+METHOD:: delay
+(describe method here)
+
+ARGUMENT:: in
+(describe argument here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: rotation
+Rotate sound around z-axis
+
+returns:: azimuth scaled between -pi and pi
+
+METHOD:: amplitude
+amplitude proportional to distance
+
+returns:: inverse square law
+
+METHOD:: azimuth
+direction angle of sound source
+
+returns:: arctangent of src and listenerDist
+
+
+EXAMPLES::
+
+code::
+(
+SynthDef(\dopplerDistance, {| listenerPosition = 2, speed 0.25, dist = 30, out = 0, fxsend|
+	var doppler, sig;
+	doppler = Doppler.new(listenerPosition, speed, dist, "noise"); //compare with saw
+	sig = SinOsc.ar(440 * doppler.pitchRatio, 0, doppler.amplitude); //very boring sound source
+	sig = DistanceFilter.ar(doppler.distance, sig); //distance filtering
+	sig = doppler.delay(sig); //delay based on distance
+	sig = Pan2.ar(sig, doppler.azimuth); //random stereo panning. Can easily be scaled to change azimuth in ambisonics
+	Out.ar(fxsend, sig * (1 - doppler.mix)); //if using a reverb synth  - adjust wet/dry based on doppler's amplitude
+	Out.ar(out, sig)
+}).add
+)
+
+x = Synth(\dopplerDistance)
+::
