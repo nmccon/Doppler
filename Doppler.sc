@@ -32,7 +32,7 @@ Doppler {
 	}
 
 	rotation {
-		^MulAdd(this.azimuth, pi, pi)
+		^MulAdd(this.azimuth, pi, pi) //need to double check the maths! imperfect result using FOARotate!
 	}
 
 	mix {
@@ -40,7 +40,7 @@ Doppler {
 	}
 
 	delay {|in|
-		^DelayL.ar(in, 1, this.distance/344, this.amplitude)
+		^DelayL.ar(in, 1, this.distance/344, this.amplitude) //don't call this method if already using pitchRatio and amplitude in an earlier calculation!
 	}
 }
 

@@ -81,7 +81,7 @@ SynthDef(\dopplerDistance, {| listenerPosition = 2, speed 0.25, dist = 30, out =
 	doppler = Doppler.new(listenerPosition, speed, dist, "noise"); //compare with saw
 	sig = SinOsc.ar(440 * doppler.pitchRatio, 0, doppler.amplitude); //very boring sound source
 	sig = DistanceFilter.ar(doppler.distance, sig); //distance filtering
-	sig = doppler.delay(sig); //delay based on distance
+	sig = doppler.delay(sig); //delay based on distance. Don't use this method if using pitchRatio and amplitude e.g. on SinOsc above.
 	sig = Pan2.ar(sig, doppler.azimuth); //random stereo panning. Can easily be scaled to change azimuth in ambisonics
 	Out.ar(fxsend, sig * (1 - doppler.mix)); //if using a reverb synth  - adjust wet/dry based on doppler's amplitude
 	Out.ar(out, sig)
