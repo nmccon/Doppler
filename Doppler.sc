@@ -36,7 +36,7 @@ Doppler {
 	}
 
 	mix {
-		^this.src.linlin(dist.neg, dist, this.amplitude, 1)
+		^this.src.linlin(dist.neg, dist, this.amplitude, 1) //I think mix is backward - close should be near 0
 	}
 
 	delay {|in|
@@ -44,3 +44,4 @@ Doppler {
 	}
 }
 
+//maybe use maybe ((0.5pi/0.5pi)/2) +0.5 for IEM azimuth???
